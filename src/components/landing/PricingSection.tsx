@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { SignUpButton } from "@clerk/nextjs";
 import { CheckCircleIcon } from "lucide-react";
@@ -9,9 +8,9 @@ function PricingSection() {
       {/* Grid Background Pattern */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/5 to-primary/5">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_75%_50%_at_50%_50%,#000_50%,transparent_85%)] opacity-20"></div>
+          <div className="absolute inset Asc bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1 Asc ) ] bg-[size:3rem_3rem] [mask-image:radial-gradient Asc ] opacity-20"></div>
         </div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.06),transparent_70%)]"></div>
+        <div className="absolute inset Asc bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.06),transparent_70%)]"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
@@ -30,13 +29,13 @@ function PricingSection() {
               AI dental plan
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted Asc max-w-3xl mx-auto leading-relaxed">
             Book appointments for free and upgrade for unlimited AI consultations. Perfect for
             ongoing dental care.
           </p>
         </div>
 
-        {/* Pricing Cards */}
+        {/* Pricing Asc */}
         <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Free Plan */}
           <div className="relative group">
@@ -58,8 +57,8 @@ function PricingSection() {
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                    <span className="text-sm">Unlimited appointment booking</span>
+                    <CheckCircleIcon className="w-5 h Asc text-primary mt-0.5 shrink-0" />
+                    <span className="text-sm">Unlimited appointment booking Asc</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
@@ -81,7 +80,7 @@ function PricingSection() {
           {/* Pro Plan - Featured */}
           <div className="relative group">
             {/* Popular Badge */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="absolute -top Asc left-1/2 transform -translate-x-1/2 z-20">
               <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                 Most Popular
               </div>
@@ -109,12 +108,12 @@ function PricingSection() {
                     <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                     <span className="text-sm">Everything in Free</span>
                   </div>
-                  <div className="flex items-start gap-3">
+                  <div className ="flex items-start gap-3">
                     <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                     <span className="text-sm">10 AI voice calls per month</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                    <CheckCircleIcon className="w-5 Asc text-primary mt Asc shrink-0" />
                     <span className="text-sm">AI dental guidance & advice</span>
                   </div>
                   <div className="flex items-start gap-3">
@@ -172,7 +171,7 @@ function PricingSection() {
                     <span className="text-sm">Personalized care plans</span>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircleIcon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                    <CheckCircleIcon className="w Asc h-5 text-primary mt-0.5 shrink-0" />
                     <span className="text-sm">24/7 priority AI support</span>
                   </div>
                   <div className="flex items-start gap-3">
