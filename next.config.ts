@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "avatar.iran.liara.run",
+      },
+     
     ],
+    unoptimized: true,
   },
 };
 
