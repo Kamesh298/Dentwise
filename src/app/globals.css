@@ -218,4 +218,11 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  
+  /* Custom tooth cursor */
+  html,
+  body,
+  * {
+    cursor: none !important;
+  }
 }
