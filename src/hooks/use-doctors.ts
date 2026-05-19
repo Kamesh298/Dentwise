@@ -1,11 +1,11 @@
 "use client";
 
-import { createDoctor, getDoctors } from "@/lib/actions/doctors";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { createDoctor, getDoctors, updateDoctor } from "@/lib/actions/doctors";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { create } from "domain";
 
 export function useGetDoctors() {
-    const result = useQuery({
+  const result = useQuery({
     queryKey: ["getDoctors"],
     queryFn: getDoctors,
   });
@@ -13,13 +13,29 @@ export function useGetDoctors() {
   return result;
 }
 
+export function useCreateDoctor() {
+  const queryClient = useQueryClient();
 
-export function useCreateDoctors() {
- const result = useMutation({
-  mutationFn: createDoctor,
-  onSuccess: () => console.log("Doctor created successfully"),
-  onError: (error) => console.error("Error while creating a doctor:"),
- })
+  const result = useMutation({
+    mutationFn: createDoctor,
+    onSuccess: () => {
+      // invalidate related queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["getDoctors"] });
+    },
+    onError: (error) => console.log("Error while  creating a doctor"),
+  });
 
- return result;
+  return result;
+}
+
+export function useUpdateDoctor() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateDoctor,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getDoctors"] });
+    },
+    onError: (error) => console.error("Failed to update doctor:", error),
+  });
 }
