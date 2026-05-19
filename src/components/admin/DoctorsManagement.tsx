@@ -1,11 +1,24 @@
 import { useGetDoctors } from "@/hooks/use-doctors";
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { EditIcon, MailIcon, PhoneIcon, PlusIcon, StethoscopeIcon } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import {
+  EditIcon,
+  MailIcon,
+  PhoneIcon,
+  PlusIcon,
+  StethoscopeIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import AddDoctorDialog from "./AddDoctorDialog";
 import { Doctor } from "@prisma/client";
+import EditDoctorDialog from "./EditDoctorDialog";
 
 function DoctorsManagement() {
   const { data: doctors = [] } = useGetDoctors();
@@ -24,9 +37,15 @@ function DoctorsManagement() {
     return gender === "MALE" ? "bg-blue-500" : "bg-pink-500";
   };
 
-  const handleEditDoctor = (doctor: Doctor) => {};
+  const handleEditDoctor = (doctor: Doctor) => {
+    setSelectedDoctor(doctor);
+    setIsEditDialogOpen(true);
+  };
 
-  const handleCloseEditDialog = () => {};
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setSelectedDoctor(null);
+  };
 
   return (
     <>
@@ -37,7 +56,9 @@ function DoctorsManagement() {
               <StethoscopeIcon className="size-5 text-primary" />
               Doctors Management
             </CardTitle>
-            <CardDescription>Manage and oversee all doctors in your practice</CardDescription>
+            <CardDescription>
+              Manage and oversee all doctors in your practice
+            </CardDescription>
           </div>
 
           <Button
@@ -59,7 +80,7 @@ function DoctorsManagement() {
                 <div className="flex items-center gap-4">
                   <div
                     className={`size-12 rounded-full ${getAvatarBgColor(
-                      doctor.gender
+                      doctor.gender,
                     )} flex items-center justify-center ring-2 ring-background text-white font-semibold text-lg`}
                   >
                     {getFirstLetter(doctor.name)}
@@ -90,12 +111,18 @@ function DoctorsManagement() {
 
                 <div className="flex items-center gap-3">
                   <div className="text-center">
-                    <div className="font-semibold text-primary">{doctor.appointmentCount}</div>
-                    <div className="text-xs text-muted-foreground">Appointments</div>
+                    <div className="font-semibold text-primary">
+                      {doctor.appointmentCount}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Appointments
+                    </div>
                   </div>
 
                   {doctor.isActive ? (
-                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>
+                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+                      Active
+                    </Badge>
                   ) : (
                     <Badge variant="secondary">Inactive</Badge>
                   )}
@@ -115,7 +142,17 @@ function DoctorsManagement() {
         </CardContent>
       </Card>
 
-      <AddDoctorDialog isOpen={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} />
+      <AddDoctorDialog
+        isOpen={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+      />
+
+      <EditDoctorDialog
+        key={selectedDoctor?.id} // advanced react
+        isOpen={isEditDialogOpen}
+        onClose={handleCloseEditDialog}
+        doctor={selectedDoctor}
+      />
     </>
   );
 }
