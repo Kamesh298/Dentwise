@@ -1,7 +1,13 @@
 "use client";
 
 import { UserButton, useUser } from "@clerk/nextjs";
-import { CalendarIcon, CrownIcon, HomeIcon, MicIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CrownIcon,
+  HomeIcon,
+  MicIcon,
+  SettingsIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,13 +16,24 @@ function Navbar() {
   const { user } = useUser();
   const pathname = usePathname();
 
+  // Check if user is admin
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+  const isAdmin = adminEmail && userEmail === adminEmail;
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-2 border-b border-border/50 bg-background/80 backdrop-blur-md h-16">
       <div className="max-w-7xl mx-auto flex justify-between items-center h-full">
         {/* LOGO */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Image src="/logo.png" alt="DentWise Logo" width={32} height={32} className="w-11" />
+            <Image
+              src="/logo.png"
+              alt="DentWise Logo"
+              width={32}
+              height={32}
+              className="w-11"
+            />
           </Link>
 
           <div className="flex items-center gap-6">
@@ -35,7 +52,9 @@ function Navbar() {
             <Link
               href="/appointments"
               className={`flex items-center gap-2 transition-colors hover:text-foreground ${
-                pathname === "/appointments" ? "text-foreground" : "text-muted-foreground"
+                pathname === "/appointments"
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               <CalendarIcon className="w-4 h-4" />
@@ -45,7 +64,9 @@ function Navbar() {
             <Link
               href="/voice"
               className={`flex items-center gap-2 transition-colors hover:text-foreground ${
-                pathname === "/voice" ? "text-foreground" : "text-muted-foreground"
+                pathname === "/voice"
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               <MicIcon className="w-4 h-4" />
@@ -54,12 +75,28 @@ function Navbar() {
             <Link
               href="/pro"
               className={`flex items-center gap-2 transition-colors hover:text-foreground ${
-                pathname === "/pro" ? "text-foreground" : "text-muted-foreground"
+                pathname === "/pro"
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               <CrownIcon className="w-4 h-4" />
               <span className="hidden md:inline">Pro</span>
             </Link>
+
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={`flex items-center gap-2 transition-colors hover:text-foreground ${
+                  pathname === "/admin"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <SettingsIcon className="w-4 h-4" />
+                <span className="hidden md:inline">Admin</span>
+              </Link>
+            )}
           </div>
         </div>
 
