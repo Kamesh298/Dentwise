@@ -1,6 +1,6 @@
 "use client";
 
-import { createVapi } from "@/lib/vapi_lazy";
+import { vapi } from "@/lib/vapi";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "../ui/card";
@@ -16,7 +16,6 @@ function VapiWidget() {
 
   const { user, isLoaded } = useUser();
   const messageContainerRef = useRef<HTMLDivElement>(null);
-  const vapiRef = useRef<any>(null);
 
   // auto-scroll for messages
   useEffect(() => {
@@ -26,10 +25,8 @@ function VapiWidget() {
     }
   }, [messages]);
 
-  // setup event listeners for VAPI (lazy initialize)
+  // setup event listeners for VAPI
   useEffect(() => {
-    let mounted = true;
-
     const handleCallStart = () => {
       console.log("Call started");
       setConnecting(false);
@@ -68,63 +65,35 @@ function VapiWidget() {
       setCallActive(false);
     };
 
-    async function initVapi() {
-      try {
-        const inst = await createVapi();
-        if (!mounted) return;
-        vapiRef.current = inst;
-
-        inst
-          .on("call-start", handleCallStart)
-          .on("call-end", handleCallEnd)
-          .on("speech-start", handleSpeechStart)
-          .on("speech-end", handleSpeechEnd)
-          .on("message", handleMessage)
-          .on("error", handleError);
-      } catch (e) {
-        console.log("Vapi init error", e);
-      }
-    }
-
-    initVapi();
+    vapi
+      .on("call-start", handleCallStart)
+      .on("call-end", handleCallEnd)
+      .on("speech-start", handleSpeechStart)
+      .on("speech-end", handleSpeechEnd)
+      .on("message", handleMessage)
+      .on("error", handleError);
 
     // cleanup event listeners on unmount
     return () => {
-      mounted = false;
-      if (vapiRef.current) {
-        try {
-          vapiRef.current
-            .off("call-start", handleCallStart)
-            .off("call-end", handleCallEnd)
-            .off("speech-start", handleSpeechStart)
-            .off("speech-end", handleSpeechEnd)
-            .off("message", handleMessage)
-            .off("error", handleError);
-        } catch (e) {
-          // ignore
-        }
-      }
+      vapi
+        .off("call-start", handleCallStart)
+        .off("call-end", handleCallEnd)
+        .off("speech-start", handleSpeechStart)
+        .off("speech-end", handleSpeechEnd)
+        .off("message", handleMessage)
+        .off("error", handleError);
     };
   }, []);
 
   const toggleCall = async () => {
-    if (callActive) {
-      try {
-        vapiRef.current?.stop();
-      } catch (e) {
-        console.log("Failed to stop call", e);
-      }
-    } else {
+    if (callActive) vapi.stop();
+    else {
       try {
         setConnecting(true);
         setMessages([]);
         setCallEnded(false);
 
-        if (!vapiRef.current) {
-          vapiRef.current = await createVapi();
-        }
-
-        await vapiRef.current.start(process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID);
+        await vapi.start(process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID);
       } catch (error) {
         console.log("Failed to start call", error);
         setConnecting(false);
