@@ -5,14 +5,37 @@ import { prisma } from "../prisma";
 import { generateAvatar } from "../utils";
 import { revalidatePath } from "next/cache";
 
+async function retry<T>(
+  fn: () => Promise<T>,
+  retries = 2,
+  delayMs = 500,
+): Promise<T> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+      delayMs *= 2;
+    }
+  }
+
+  throw lastError;
+}
+
 export async function getDoctors() {
   try {
-    const doctors = await prisma.doctor.findMany({
-      include: {
-        _count: { select: { appointments: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const doctors = await retry(() =>
+      prisma.doctor.findMany({
+        include: {
+          _count: { select: { appointments: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+    );
 
     return doctors.map((doctor) => ({
       ...doctor,
