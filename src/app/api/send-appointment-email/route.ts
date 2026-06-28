@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     // send the email
     const fromEmail =
-      process.env.RESEND_FROM_EMAIL || "DentWise <onboarding@resend.dev>";
+      process.env.RESEND_FROM_EMAIL || "DentWise <dentwise@resend.dev>";
     const recipientEmail = process.env.RESEND_TEST_EMAIL || userEmail;
     const { data, error } = await resend.emails.send({
       from: fromEmail,
