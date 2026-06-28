@@ -1,9 +1,42 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "../prisma";
 
 import { generateAvatar } from "../utils";
+import { AppointmentStatus } from "@prisma/client";
+
+async function getOrCreateUserForClerk() {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const existingUser = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
+  if (existingUser) return existingUser;
+
+  const clerkUser = await currentUser();
+  if (!clerkUser) return null;
+
+  try {
+    return await prisma.user.create({
+      data: {
+        clerkId: userId,
+        firstName: clerkUser.firstName,
+        lastName: clerkUser.lastName,
+        email:
+          clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@clerk.local`,
+        phone: clerkUser.phoneNumbers[0]?.phoneNumber ?? null,
+      },
+    });
+  } catch (error: any) {
+    if (error?.code === "P2002") {
+      return prisma.user.findUnique({ where: { clerkId: userId } });
+    }
+
+    throw error;
+  }
+}
 
 function transformAppointment(appointment: any) {
   return {
@@ -36,7 +69,7 @@ export async function getAppointments() {
       orderBy: { createdAt: "desc" },
     });
 
-    return appointments;
+    return appointments.map(transformAppointment);
   } catch (error) {
     console.log("Error fetching appointments:", error);
     throw new Error("Failed to fetch appointments");
@@ -45,16 +78,8 @@ export async function getAppointments() {
 
 export async function getUserAppointments() {
   try {
-    // get authenticated user from Clerk
-    const { userId } = await auth();
-    if (!userId) throw new Error("You must be logged in to view appointments");
-
-    // find user by clerkId from authenticated session
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-    if (!user)
-      throw new Error(
-        "User not found. Please ensure your account is properly set up.",
-      );
+    const user = await getOrCreateUserForClerk();
+    if (!user) return [];
 
     const appointments = await prisma.appointment.findMany({
       where: { userId: user.id },
@@ -74,12 +99,10 @@ export async function getUserAppointments() {
 
 export async function getUserAppointmentStats() {
   try {
-    const { userId } = await auth();
-    if (!userId) throw new Error("You must be authenticated");
-
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-
-    if (!user) throw new Error("User not found");
+    const user = await getOrCreateUserForClerk();
+    if (!user) {
+      return { totalAppointments: 0, completedAppointments: 0 };
+    }
 
     // these calls will run in parallel, instead of waiting each other
     const [totalCount, completedCount] = await Promise.all([
@@ -133,19 +156,14 @@ interface BookAppointmentInput {
 
 export async function bookAppointment(input: BookAppointmentInput) {
   try {
-    const { userId } = await auth();
-    if (!userId)
+    const user = await getOrCreateUserForClerk();
+    if (!user) {
       throw new Error("You must be logged in to book an appointment");
+    }
 
     if (!input.doctorId || !input.date || !input.time) {
       throw new Error("Doctor, date, and time are required");
     }
-
-    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
-    if (!user)
-      throw new Error(
-        "User not found. Please ensure your account is properly set up.",
-      );
 
     const appointment = await prisma.appointment.create({
       data: {
@@ -172,5 +190,22 @@ export async function bookAppointment(input: BookAppointmentInput) {
   } catch (error) {
     console.error("Error booking appointment:", error);
     throw new Error("Failed to book appointment. Please try again later.");
+  }
+}
+
+export async function updateAppointmentStatus(input: {
+  id: string;
+  status: AppointmentStatus;
+}) {
+  try {
+    const appointment = await prisma.appointment.update({
+      where: { id: input.id },
+      data: { status: input.status },
+    });
+
+    return appointment;
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    throw new Error("Failed to update appointment");
   }
 }

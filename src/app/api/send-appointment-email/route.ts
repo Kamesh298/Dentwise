@@ -25,10 +25,12 @@ export async function POST(request: Request) {
     }
 
     // send the email
-    // do not use this in prod, only for testing purposes
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL || "DentWise <onboarding@resend.dev>";
+    const recipientEmail = process.env.RESEND_TEST_EMAIL || userEmail;
     const { data, error } = await resend.emails.send({
-      from: "DentWise <no-reply@resend.dev>",
-      to: [userEmail],
+      from: fromEmail,
+      to: [recipientEmail],
       subject: "Appointment Confirmation - DentWise",
       react: AppointmentConfirmationEmail({
         doctorName,
@@ -43,7 +45,7 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Resend error:", error);
       return NextResponse.json(
-        { error: "Failed to send email" },
+        { error: "Failed to send email", details: error.message ?? error },
         { status: 500 },
       );
     }
