@@ -209,3 +209,28 @@ export async function updateAppointmentStatus(input: {
     throw new Error("Failed to update appointment");
   }
 }
+
+export async function deleteAppointments(input: { ids: string[] }) {
+  try {
+    if (!input.ids?.length) {
+      throw new Error("No appointments selected");
+    }
+
+    const uniqueIds = [...new Set(input.ids)];
+    const deletedAppointments = await prisma.appointment.deleteMany({
+      where: {
+        id: { in: uniqueIds },
+        status: "COMPLETED",
+      },
+    });
+
+    if (deletedAppointments.count === 0) {
+      throw new Error("Only completed appointments can be deleted");
+    }
+
+    return { success: true, deletedCount: deletedAppointments.count };
+  } catch (error) {
+    console.error("Error deleting appointments:", error);
+    throw new Error("Failed to delete appointments");
+  }
+}

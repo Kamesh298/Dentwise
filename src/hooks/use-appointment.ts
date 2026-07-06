@@ -2,6 +2,7 @@
 
 import {
   bookAppointment,
+  deleteAppointments,
   getAppointments,
   getBookedTimeSlots,
   getUserAppointments,
@@ -57,5 +58,18 @@ export function useUpdateAppointmentStatus() {
       queryClient.invalidateQueries({ queryKey: ["getAppointments"] });
     },
     onError: (error) => console.error("Failed to update appointment:", error),
+  });
+}
+
+export function useDeleteAppointments() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteAppointments,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getAppointments"] });
+      queryClient.invalidateQueries({ queryKey: ["getUserAppointments"] });
+    },
+    onError: (error) => console.error("Failed to delete appointments:", error),
   });
 }
