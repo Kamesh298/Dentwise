@@ -12,6 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import ThemeToggle from "@/components/ThemeToggle";
+
 function Navbar() {
   const { user } = useUser();
   const pathname = usePathname();
@@ -102,6 +104,7 @@ function Navbar() {
 
         {/* RIGHT SECTION */}
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <div className="flex items-center gap-3">
             <div className="hidden lg:flex flex-col items-end">
               <span className="text-sm font-medium text-foreground">

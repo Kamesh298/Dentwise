@@ -22,7 +22,7 @@ export default async function Home() {
     }
   }
 
-  return(
+  return (
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
@@ -34,4 +34,3 @@ export default async function Home() {
     </div>
   );
 }
-

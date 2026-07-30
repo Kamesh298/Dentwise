@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import UserSync from "@/components/UserSync";
 import TanStackProvider from "@/components/providers/TanStackProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -40,16 +41,23 @@ export default function RootLayout({
           },
         }}
       >
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
           <head>
             <script src="/tooth-cursor.js" defer></script>
           </head>
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <UserSync />
-            <Toaster />
-            {children}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <UserSync />
+              <Toaster />
+              {children}
+            </ThemeProvider>
           </body>
         </html>
       </ClerkProvider>

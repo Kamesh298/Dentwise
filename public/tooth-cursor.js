@@ -22,10 +22,10 @@ if (typeof window !== "undefined") {
     `;
     document.body.appendChild(cursorElement);
 
-    // Track mouse movement  
+    // Track mouse movement
     const handleMouseMove = (e) => {
-      cursorElement.style.left = (e.clientX - 22.5) + "px";
-      cursorElement.style.top = (e.clientY - 22.5) + "px";
+      cursorElement.style.left = e.clientX - 22.5 + "px";
+      cursorElement.style.top = e.clientY - 22.5 + "px";
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -35,10 +35,3 @@ if (typeof window !== "undefined") {
   // Initialize right away
   initToothCursor();
 }
-
-
-
-
-
-
-

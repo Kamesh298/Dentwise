@@ -36,7 +36,7 @@ export function getDisplayInitial(name: string) {
 export function isGeneratedAvatarUrl(imageUrl?: string) {
   return Boolean(
     imageUrl?.startsWith("https://ui-avatars.com/api/") ||
-    imageUrl?.includes("ui-avatars.com/api/"),
+      imageUrl?.includes("ui-avatars.com/api/"),
   );
 }
 
